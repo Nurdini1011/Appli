@@ -89,12 +89,11 @@ int __cdecl main(void)
         return 1;
     }
 
-     iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+    iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
 
     // Receive until the peer shuts down the connection
     do {
-
-       
+		//iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
         if (iResult > 0) {
             printf("Bytes received: %d\n", iResult);
 
@@ -105,9 +104,10 @@ int __cdecl main(void)
                 closesocket(ClientSocket);
                 WSACleanup();
                 return 1;
-            }
-            printf("Bytes sent: %d\n", iSendResult);
-            iResult=iResult-1;
+            }else{
+				printf("Bytes sent: %d\n", iSendResult);
+			}
+            
         }
         else if (iResult == 0)
             printf("Connection closing...\n");
@@ -116,10 +116,10 @@ int __cdecl main(void)
             closesocket(ClientSocket);
             WSACleanup();
             return 1;
-        }
-        iResult = iResult - 1;
+        }  
+        iResult = iResult -7; 
 
-    } while (iResult > 0);
+    } while (iResult >= 0);
 
     // shutdown the connection since we're done
     iResult = shutdown(ClientSocket, SD_SEND);
