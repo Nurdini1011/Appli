@@ -25,7 +25,7 @@ int __cdecl main()
                     hints;
     const char *sendbuf = "this is a test";
     char recvbuf[DEFAULT_BUFLEN];
-    int iResult;
+    int iResult,iSendResult;
     int recvbuflen = DEFAULT_BUFLEN;
     
     /*// Validate the parameters
@@ -100,13 +100,25 @@ int __cdecl main()
     do {
 
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-        if ( iResult > 0 )
+        if ( iResult > 0 ){
             printf("Bytes received: %d\n", iResult);
+            // Echo the buffer back to the sender
+            iSendResult = send( ConnectSocket, recvbuf, iResult, 0 );
+            if (iSendResult == SOCKET_ERROR) {
+                printf("send failed with error: %d\n", WSAGetLastError());
+                closesocket(ConnectSocket);
+                WSACleanup();
+                return 1;
+            }
+            printf("Bytes sent: %d\n", iSendResult);
+		}
         else if ( iResult == 0 )
             printf("Connection closed\n");
         else
             printf("recv failed with error: %d\n", WSAGetLastError());
-        iResult=iResult-1;
+        iResult =iResult - 5;
+        
+        
 
     } while( iResult > 0 );
     
